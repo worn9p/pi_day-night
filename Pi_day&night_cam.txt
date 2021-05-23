@@ -1,0 +1,91 @@
+from subprocess import call
+from gpiozero import MotionSensor 
+import time
+from threading import Thread
+from time import sleep
+from picamera import PiCamera
+
+import RPi.GPIO as GPIO 
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(27, GPIO.OUT)
+
+import subprocess
+import datetime as dt
+
+import picamera
+camera = PiCamera()
+
+
+def func1():
+    record = ["arecord", "-f", "dat", "-d", "20", "-D", "plughw:1,0", "/home/pi/Videos/audio%s.wav" % x]
+
+    p = subprocess.Popen(record, stdout=subprocess.PIPE)   
+
+    
+def func2():
+ 
+    camera.resolution=(1920,1080)
+    camera.framerate = 25.38
+    camera.annotate_background = picamera.Color('black')
+    camera.start_recording( '/home/pi/Videos/video.h264')
+    camera.annotate_text = "PeteCam "+dt.datetime.now().strftime('%d-%m-%y %H:%M')
+    camera.wait_recording(20)                                
+    camera.stop_recording()
+    input_video = ('/home/pi/Videos/video.h264')
+    output_video = ('/home/pi/Videos/video%s.mp4' % x)
+    call(["MP4Box", "-add", input_video, output_video])
+
+def func3():
+    GPIO.output(27, GPIO.HIGH)
+    time.sleep(20)
+    GPIO.output(27, GPIO.LOW)
+  
+    
+x = 0
+
+pir = MotionSensor(17) 
+ 
+ 
+pir.wait_for_no_motion() 
+ 
+print("Running (CTRL-C to exit)") 
+ 
+ 
+currentstate = False 
+previousstate = False 
+ 
+try: 
+     
+    while True: 
+        
+        currentstate = pir.motion_detected 
+ 
+      
+        if currentstate == True and previousstate == False: 
+            
+           x = x + 1
+           
+           
+           if __name__ == '__main__':
+               Thread(target = func1).start()
+               Thread(target = func2).start()
+               Thread(target = func3).start()
+           
+            
+            
+           time.sleep(25)
+            
+         
+        elif currentstate == False and previousstate == True: 
+            
+           previousstate = False 
+            
+        
+        time.sleep(0.2) 
+        
+
+except KeyboardInterrupt: 
+    print("    Quit")
+    
+    GPIO.output(27, GPIO.LOW)
