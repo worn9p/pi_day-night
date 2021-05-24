@@ -1,0 +1,26 @@
+Based on Raspbian Stretch OS image
+
+Put in Pi Zero Update from terminal when on internet
+sudo apt-get update
+sudo apt-get upgrade
+sudo reboot
+
+config file additions
+audio_pwn_mode=2
+
+overclocking needed for stability
+
+over_voltage=4
+force_turbo=1
+
+To start automatically in Terminal type
+sudo crontab -e
+
+then in crontab type
+@reboot sleep 30 && python3 /home/pi/Yourfilename.py
+
+sleep 30 && just delays the start which may be helpful when it comes to looking at the results.
+
+Then see in the video   https://www.youtube.com/watch?v=kS9nv2RRtro&t=3s (as mentioned before) about changing where the pi boots from so it will start as soon as switched on.
+
+The camera can be left out it will work for about 2 days. When you get home you'll need to go to Terminal and get it to boot from desktop. But before that you'll need to stop the program from running. Go into Terminal and type sudo halt and also go into crontab and delete your line so it doesn't try to run again when switched on. 
